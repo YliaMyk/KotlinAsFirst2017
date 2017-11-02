@@ -60,12 +60,11 @@ fun timeForHalfWay(t1: Double, v1: Double,
     val firstDistance = t1 * v1
     val secondDistance = t2 * v2
 
-    if ((haifDistance) < (firstDistance))
-        return haifDistance / v1
-    else if ((haifDistance) in firstDistance .. (firstDistance + secondDistance))
-        return t1 + (haifDistance - firstDistance) / v2
-    else
-        return t1 + t2 + (haifDistance - firstDistance - secondDistance) / v3
+    return when {
+        (haifDistance) < (firstDistance) -> haifDistance / v1
+        (haifDistance) in firstDistance .. (firstDistance + secondDistance) -> t1 + (haifDistance - firstDistance) / v2
+        else -> t1 + t2 + (haifDistance - firstDistance - secondDistance) / v3
+    }
 
 }
 
@@ -80,16 +79,12 @@ fun timeForHalfWay(t1: Double, v1: Double,
  */
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
-                       rookX2: Int, rookY2: Int): Int {
-    if ((kingX == rookX1 || kingX == rookX2) && (kingY == rookY2 || kingY == rookY1))
-        return 3
-    else if (kingX == rookX1 || kingY == rookY1)
-        return 1
-    else if (kingX == rookX2 || kingY == rookY2)
-        return 2
-    else
-        return 0
-}
+                       rookX2: Int, rookY2: Int): Int = when {
+                           (kingX == rookX1 || kingX == rookX2) && (kingY == rookY2 || kingY == rookY1) -> 3
+                           kingX == rookX1 || kingY == rookY1 -> 1
+                           kingX == rookX2 || kingY == rookY2 -> 2
+                           else -> 0
+                       }
 
 /**
  * Простая
@@ -106,14 +101,12 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           bishopX: Int, bishopY: Int): Int {
     val modulusDishopX = Math.abs(kingX - bishopX)
     val modulusDishopY = Math.abs(kingY - bishopY)
-    if ((kingX == rookX || kingY == rookY) && (modulusDishopX == modulusDishopY))
-        return 3
-    else if ((kingX == rookX || kingY == rookY))
-        return 1
-    else if (modulusDishopX == modulusDishopY)
-        return 2
-    else
-        return 0
+    return when {
+        (kingX == rookX || kingY == rookY) && (modulusDishopX == modulusDishopY) -> 3
+        kingX == rookX || kingY == rookY -> 1
+        modulusDishopX == modulusDishopY -> 2
+        else -> 0
+    }
 }
 
 /**
@@ -128,16 +121,12 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     val squareA = sqr(a)
     val squareB = sqr(b)
     val squareC = sqr(c)
-    if ((a > b + c) || (b > a + c) || (c > b + a)) {
-        return -1}
-    else {
-        if ((squareA == squareB + squareC) || (squareB == squareA + squareC) || (squareC == squareB + squareA)) {
-            return 1
-        } else if ((squareA < squareB + squareC) && (squareB < squareA + squareC) && (squareC < squareA + squareB)) {
-            return 0
-        } else {
-            return 2
-        }
+    return when {
+        a > b + c || b > a + c || c > b + a -> -1
+        squareA == squareB + squareC || squareB == squareA + squareC || squareC == squareB + squareA -> 1
+        (squareA < squareB + squareC) && (squareB < squareA + squareC) && (squareC < squareA + squareB) -> 0
+        else -> 2
+
     }
  }
 
@@ -149,15 +138,10 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int  {
-    if (b >= c && a <= c && b <= d){
-        return b - c}
-    else if (a <= d && c <= a && b >= d){
-        return d - a}
-    else if (a >= c && b <= d){
-        return b - a}
-    else if (a <= c && b >= d){
-        return d - c}
-    else {
-        return -1}
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
+    c in a..b && b <= d -> b - c
+    a in c..d && b >= d -> d - a
+    a >= c && b <= d -> b - a
+    a <= c && b >= d -> d - c
+    else -> -1
 }

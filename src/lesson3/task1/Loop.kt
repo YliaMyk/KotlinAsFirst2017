@@ -1,7 +1,6 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson3.task1
 
-import sun.util.calendar.CalendarUtils.mod
 import java.lang.Math.*
 
 /**
@@ -65,15 +64,15 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int {
     var mod = n
-    var i = 0.0
+    var i = 0
     if (n == 0) {
         return 1
     }
     while (mod != 0) {
         mod /= 10
-        i += 1.0
+        i += 1
     }
-    return i.toInt()
+    return i
 }
 
 /**
@@ -225,7 +224,7 @@ fun createRow(n : Int, intFun: (Int) -> String): Int {
         condition += buf.length
     }
     val result = buf.length - 1 - (condition - n)
-    return buf[result].toInt() - '0'.toInt()
+    return buf[result] - '0'
 }
 /**
  * Сложная
@@ -234,7 +233,7 @@ fun createRow(n : Int, intFun: (Int) -> String): Int {
  * 149162536496481100121144...
  * Например, 2-я цифра равна 4, 7-я 5, 12-я 6.
  */
-fun squareSequenceDigit(n: Int): Int  = TODO()
+fun squareSequenceDigit(n: Int): Int  = createRow(n){b -> "${b*b}" }
 /**
  * Сложная
  *
