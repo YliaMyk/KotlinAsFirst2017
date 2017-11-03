@@ -191,15 +191,24 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> = TODO()
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> = TODO()
-
+fun factorize(n: Int): List<Int> {
+    var n1 = n
+    val answer: MutableList<Int> = mutableListOf()
+    for (i in 2..Math.round(Math.sqrt(n.toDouble())).toInt())
+        while (n1 % i == 0) {
+            answer.add(i)
+            n1 /= i
+        }
+    if (n1 != 1) answer.add(n1)
+    return answer
+}
 /**
  * Сложная
  *
  * Разложить заданное натуральное число n > 1 на простые множители.
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  */
-fun factorizeToString(n: Int): String = TODO()
+fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*")
 
 /**
  * Средняя
@@ -227,7 +236,17 @@ fun convertToString(n: Int, base: Int): String = TODO()
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
+fun decimal(digits: List<Int>, base: Int): Int {
+    var answer = 0
+    var a = digits.count() - 1
+    var f = Math.pow(base.toDouble(), a.toDouble()).toInt()
+    for (i in digits) {
+        answer += f * i
+        f /= base
+        a--
+    }
+    return answer
+}
 
 /**
  * Сложная
@@ -238,7 +257,16 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+    val a = mutableListOf<Int>()
+    for (i in str) {
+        if (i.toInt() < 58)
+            a += i.toInt() - 48
+        else
+            a += i.toInt() - 87
+    }
+    return decimal(a.toList(), base)
+}
 
 /**
  * Сложная
