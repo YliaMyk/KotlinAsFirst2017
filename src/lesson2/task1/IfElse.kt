@@ -60,10 +60,11 @@ fun timeForHalfWay(t1: Double, v1: Double,
     val firstDistance = t1 * v1
     val secondDistance = t2 * v2
 
-    return when {
-        (haifDistance) < (firstDistance) -> haifDistance / v1
-        (haifDistance) in firstDistance .. (firstDistance + secondDistance) -> t1 + (haifDistance - firstDistance) / v2
-        else -> t1 + t2 + (haifDistance - firstDistance - secondDistance) / v3
+    when {
+        (haifDistance) < (firstDistance) -> return haifDistance / v1
+        (haifDistance) in firstDistance..(firstDistance + secondDistance) ->
+            return t1 + (haifDistance - firstDistance) / v2
+        else -> return t1 + t2 + (haifDistance - firstDistance - secondDistance) / v3
     }
 
 }

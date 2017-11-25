@@ -67,8 +67,8 @@ fun main(args: Array<String>) {
  * При неверном формате входной строки вернуть пустую строку
  */
 fun dateStrToDigit(str: String): String {
-    val month = listOf("января", "февраля", "марта", "апреля", "мая",
-            "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря")
+    val month = listOf("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "cентября", "октября",
+            "ноября", "декабря")
     val a = str.split(" ").toMutableList()
     when {
         a.count() != 3 -> return ""
@@ -91,8 +91,14 @@ fun dateStrToDigit(str: String): String {
  * Перевести её в строковый формат вида "15 июля 2016".
  * При неверном формате входной строки вернуть пустую строку
  */
-fun dateDigitToStr(digital: String): String = TODO()
-
+fun dateDigitToStr(digital: String): String {
+    val month = listOf("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "cентября",
+            "октября", "ноября", "декабря")
+    if (digital.length != 10 && (digital.replace(".", "").all { it.isDigit() })) return ""
+    val monthNum = digital.substring(3, 5).toInt() - 1
+    return if (monthNum !in 0..11) ""
+    else ("${digital.substring(0, 2)} ${month[monthNum]} ${digital.substring(6)}")
+}
 /**
  * Средняя
  *
@@ -107,7 +113,9 @@ fun dateDigitToStr(digital: String): String = TODO()
  */
 fun flattenPhoneNumber(phone: String): String {
     when {
-        !phone.matches(Regex("""^[ \d\+\-\(\)]{1,}$""")) -> return ""
+        phone.matches(Regex("""^[ \d+\-\(\)]{1,}$""")).not() -> {
+            return ""
+        }
         else -> return phone.replace(Regex("""[ \-\(\)]"""), "")
     }
 }
@@ -123,7 +131,13 @@ fun flattenPhoneNumber(phone: String): String {
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int =
+        if (jumps.matches(Regex("""[ \d\-%]{1,}""")))
+            jumps.replace(Regex("""[%\-]"""), "").replace("  ", " ")
+                    .split(" ").filter { !it.isEmpty() }.maxBy { it.toInt() }?.toInt() ?: -1
+        else -1
+
+
 
 /**
  * Сложная
@@ -135,7 +149,16 @@ fun bestLongJump(jumps: String): Int = TODO()
  * Прочитать строку и вернуть максимальную взятую высоту (230 в примере).
  * При нарушении формата входной строки вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    val positive = StringBuilder()
+    val workarr = jumps.split(" ")
+    if (workarr.size % 2 == 1) return -1
+    for (i in 0 until workarr.size step 2) {
+        if (workarr[i + 1].contains('+'))
+            positive.append("${workarr[i]} ")
+    }
+    return bestLongJump(positive.toString())
+}
 
 /**
  * Сложная
@@ -146,8 +169,25 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
-
+fun plusMinus(expression: String): Int {
+    val splStr = expression.split(" ")
+    if (!splStr[0].matches(Regex("""\d+"""))) throw IllegalArgumentException()
+    var res = splStr[0].toInt()
+    var mn = 1
+    for (i in 1 until splStr.size) {
+        if (i % 2 == 1) {
+            mn = when (splStr[i]) {
+                "+" -> 1
+                "-" -> -1
+                else -> throw IllegalArgumentException()
+            }
+        } else {
+            if (!splStr[i].matches(Regex("""\d+"""))) throw IllegalArgumentException()
+            res += mn * splStr[i].toInt()
+        }
+    }
+    return res
+}
 /**
  * Сложная
  *
