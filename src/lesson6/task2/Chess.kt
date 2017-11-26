@@ -201,8 +201,8 @@ fun bishopMoveNumber(start: Square, end: Square): Int = when {
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun bishopTrajectory(start: Square, end: Square): List<Square> {
-    if (bishopMoveNumber(start, end) == -1) return listOf()
     val res = mutableListOf<Square>(start)
+    if (bishopMoveNumber(start, end) == -1) return listOf()
     if (bishopMoveNumber(start, end) == 0) return res
     if (bishopMoveNumber(start, end) == 1) res.add(end)
     else {
@@ -210,9 +210,8 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
         var f = start.row - start.column
         var y = (f + e) / 2
         var x = y - f
-        when {
-            !Square(x, y).inside() -> {
-                f = start.row + start.column
+        when {!Square(x, y).inside() -> {
+            f = start.row + start.column
                 e = end.row - end.column
                 y = (f + e) / 2
                 x = y - e
@@ -287,14 +286,18 @@ fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
 fun knightMoveNumber(start: Square, end: Square): Int {
-    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
-    var resSer = mutableListOf<Square>(start)
-    var res = 0
-    while (end !in resSer) {
-        resSer = li(end, resSer, delKnight)
-        res++
+    when {
+        !start.inside() || !end.inside() -> throw IllegalArgumentException()
+        else -> {
+            var resSer = mutableListOf<Square>(start)
+            var res = 0
+            while (end !in resSer) {
+                resSer = li(end, resSer, delKnight)
+                res++
+            }
+            return res
+        }
     }
-    return res
 }
 
 
