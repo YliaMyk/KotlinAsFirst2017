@@ -2,6 +2,58 @@
 
 package lesson6.task2
 
+val delKing = listOf(Pair(1, 1), Pair(1, 0), Pair(1, -1), Pair(0, 1),
+        Pair(0, -1), Pair(-1, 1), Pair(-1, 0), Pair(-1, -1))
+
+val delKnight = listOf(Pair(2, 1), Pair(2, -1), Pair(-2, 1), Pair(-2, -1),
+        Pair(1, 2), Pair(1, -2), Pair(-1, 2), Pair(-1, -2))
+
+fun li(end: Square, path: MutableList<Square>, del: List<Pair<Int, Int>>): MutableList<Square> {
+    val res = path.toMutableList()
+    for (p in path) {
+        for (d in del) {
+            val tmp = Square(p.column + d.first, p.row + d.second)
+            if (tmp !in res && tmp.inside()) res.add(tmp)
+        }
+    }
+    return res
+}
+
+fun algorithmLi(start: Square, end: Square, del: List<Pair<Int, Int>>): List<Square> {
+    val desk = arrayOf(
+            arrayOf(-1, -1, -1, -1, -1, -1, -1, -1),
+            arrayOf(-1, -1, -1, -1, -1, -1, -1, -1),
+            arrayOf(-1, -1, -1, -1, -1, -1, -1, -1),
+            arrayOf(-1, -1, -1, -1, -1, -1, -1, -1),
+            arrayOf(-1, -1, -1, -1, -1, -1, -1, -1),
+            arrayOf(-1, -1, -1, -1, -1, -1, -1, -1),
+            arrayOf(-1, -1, -1, -1, -1, -1, -1, -1),
+            arrayOf(-1, -1, -1, -1, -1, -1, -1, -1)
+    )
+    var path = mutableListOf<Square>(start)
+    var res = 0
+    while (true) {
+        path.forEach {
+            if (desk[it.column - 1][it.row - 1] == -1 || desk[it.column - 1][it.row - 1] > res)
+                desk[it.column - 1][it.row - 1] = res
+        }
+        if (end in path) break
+        path = li(end, path, del)
+        res++
+    }
+    val smallest = mutableListOf<Square>(end)
+    var point = end
+    while (point != start) {
+        for (d in del) {
+            val tmp = Square(point.column + d.first, point.row + d.second)
+            if (!tmp.inside()) continue
+            if (desk[tmp.column - 1][tmp.row - 1] == desk[point.column - 1][point.row - 1] - 1) {
+                smallest.add(tmp); point = tmp; break
+            }
+        }
+    }
+    return smallest
+}
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
  * Поэтому, обе координаты клетки (горизонталь row, вертикаль column) могут находиться в пределах от 1 до 8.
@@ -84,6 +136,7 @@ fun rookMoveNumber(start: Square, end: Square): Int = when {
  *          rookTrajectory(Square(3, 5), Square(8, 5)) = listOf(Square(3, 5), Square(8, 5))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
+
 fun rookTrajectory(start: Square, end: Square): List<Square> {
     val res = mutableListOf(start)
     var (x, y) = start
@@ -147,7 +200,29 @@ fun bishopMoveNumber(start: Square, end: Square): Int = when {
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun bishopTrajectory(start: Square, end: Square): List<Square> {
+    if (bishopMoveNumber(start, end) == -1) return listOf()
+    val res = mutableListOf<Square>(start)
+    if (bishopMoveNumber(start, end) == 0) return res
+    if (bishopMoveNumber(start, end) == 1) res.add(end)
+    else {
+        var e = end.column + end.row
+        var f = start.row - start.column
+        var y = (f + e) / 2
+        var x = y - f
+        when {
+            !Square(x, y).inside() -> {
+                f = start.row + start.column
+                e = end.row - end.column
+                y = (f + e) / 2
+                x = y - e
+            }
+        }
+        res.add(Square(x, y))
+        res.add(end)
+    }
+    return res
+}
 
 /**
  * Средняя
@@ -169,6 +244,7 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
+
 fun kingMoveNumber(start: Square, end: Square): Int = TODO()
 
 /**
@@ -210,7 +286,17 @@ fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Пример: knightMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
-fun knightMoveNumber(start: Square, end: Square): Int = TODO()
+fun knightMoveNumber(start: Square, end: Square): Int {
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
+    var resSer = mutableListOf<Square>(start)
+    var res = 0
+    while (end !in resSer) {
+        resSer = li(end, resSer, delKnight)
+        res++
+    }
+    return res
+}
+
 
 /**
  * Очень сложная
@@ -232,4 +318,4 @@ fun knightMoveNumber(start: Square, end: Square): Int = TODO()
  *
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun knightTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun knightTrajectory(start: Square, end: Square): List<Square> = algorithmLi(start, end, delKnight).reversed()
