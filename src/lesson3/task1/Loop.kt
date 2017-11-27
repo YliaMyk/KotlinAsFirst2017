@@ -170,7 +170,7 @@ fun sin(x: Double, eps: Double): Double{
     var d = wx
     var one = -1
     while(abs(d)>eps){
-        d = one * pow(wx,2.0*count+1)/ factorial(2*count+1)
+        d = one * pow(wx, 2.0 * count + 1) / factorial(2 * count + 1)
         one *= -1
         count++
         result += d

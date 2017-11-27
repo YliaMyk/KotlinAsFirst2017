@@ -69,15 +69,15 @@ fun main(args: Array<String>) {
 fun dateStrToDigit(str: String): String {
     val month = listOf("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "cентября", "октября",
             "ноября", "декабря")
-    val a = str.split(" ").toMutableList()
+    val a = str.split(" ")
     when {
-        a.count() != 3 -> return ""
+        a.size != 3 -> return ""
         else -> {
             val valid = month.indexOf(a[1])
             if (valid == -1) return ""
-            a[0] = twoDigitStr(a[0].toInt())
-            a[1] = twoDigitStr(valid + 1)
-            return a.joinToString(separator = ".")
+            val day = twoDigitStr(a[0].toInt())
+            val mon = twoDigitStr(valid + 1)
+            return "${day}.${mon}.${a[2]}"
         }
     }
 }
@@ -171,6 +171,7 @@ fun bestHighJump(jumps: String): Int {
  */
 fun plusMinus(expression: String): Int {
     val splStr = expression.split(" ")
+    val reg = Regex("""\d+""")
     if (!splStr[0].matches(Regex("""\d+"""))) throw IllegalArgumentException()
     var res = splStr[0].toInt()
     var mn = 1
@@ -182,7 +183,7 @@ fun plusMinus(expression: String): Int {
                 else -> throw IllegalArgumentException()
             }
         } else {
-            if (!splStr[i].matches(Regex("""\d+"""))) throw IllegalArgumentException()
+            if (!splStr[i].matches(reg)) throw IllegalArgumentException()
             res += mn * splStr[i].toInt()
         }
     }
