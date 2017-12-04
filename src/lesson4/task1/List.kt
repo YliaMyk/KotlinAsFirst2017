@@ -278,6 +278,27 @@ fun decimalFromString(str: String, base: Int): Int {
  */
 fun roman(n: Int): String = TODO()
 
+fun getThuosend(ri: Int): String {
+    val n10 = ri % 100
+    val n1 = n10 % 10
+    if (n10 in 11..19) return "тысяч"
+    else if (n1 in 2..4) return "тысячи"
+    else if (n1 == 1) return "тысяча"
+    else return "тысяч"
+}
+
+fun getFst(n: Int, sex: Int): String {
+    val wrLst = listOf("три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    return when {
+        n in 3..9 -> wrLst[n - 3]
+        n == 1 && sex == 0 -> "один"
+        n == 1 && sex == 1 -> "одна"
+        n == 2 && sex == 0 -> "два"
+        n == 2 && sex == 1 -> "две"
+        else -> ""
+    }
+}
+
 /**
  * Очень сложная
  *
@@ -285,4 +306,41 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    val thsd = listOf<String>("", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот",
+            "семьсот", "восемьсот", "девятьсот")
+    val ten = listOf<String>("", "десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
+            "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать", "двадцать")
+    val tens = listOf<String>("", "десять", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
+            "восемьдесят", "девяносто")
+    val tmp = mutableListOf<Int>()
+    var workSegment = n
+    while (workSegment > 999) {
+        val seg = workSegment / 1000
+        tmp.add(workSegment - seg * 1000)
+        workSegment = seg
+    }
+    tmp.add(workSegment)
+    tmp.reverse()
+    val answer = mutableListOf<String>()
+    var lev = tmp.count() - 1
+    for (dig in tmp) {
+        val fst = dig / 100
+        val two = dig % 100
+        val scd = two / 10
+        val thrd = dig % 10
+        if (dig > 99) answer.add(thsd[fst])
+        if (two > 20) {
+            answer.add(tens[scd])
+            answer.add(getFst(thrd, lev))
+        } else {
+            if (two > 9) answer.add(ten[two - 9])
+            else if (two in 1..9) answer.add(getFst(thrd, lev))
+        }
+        if (lev == 1) {
+            answer.add(getThuosend(dig))
+        }
+        lev--
+    }
+    return answer.filter { it != "" }.joinToString(separator = " ")
+}
