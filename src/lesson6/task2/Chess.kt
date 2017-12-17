@@ -8,15 +8,15 @@ val delKing = listOf(Pair(1, 1), Pair(1, 0), Pair(1, -1), Pair(0, 1),
 val delKnight = listOf(Pair(2, 1), Pair(2, -1), Pair(-2, 1), Pair(-2, -1),
         Pair(1, 2), Pair(1, -2), Pair(-1, 2), Pair(-1, -2))
 
-fun li(end: Square, path: MutableList<Square>, del: List<Pair<Int, Int>>): MutableList<Square> {
-    val res = path.toMutableList()
+fun li(end: Square, path: List<Square>, del: List<Pair<Int, Int>>): List<Square> {
+    val res = mutableListOf<Square>()
     for (p in path) {
         for (d in del) {
             val tmp = Square(p.column + d.first, p.row + d.second)
-            if (tmp !in res && tmp.inside()) res.add(tmp)
+            if (tmp !in path && tmp.inside()) res.add(tmp)
         }
     }
-    return res
+    return path + res
 }
 
 fun algorithmLi(start: Square, end: Square, del: List<Pair<Int, Int>>): List<Square> {
@@ -30,7 +30,7 @@ fun algorithmLi(start: Square, end: Square, del: List<Pair<Int, Int>>): List<Squ
             arrayOf(-1, -1, -1, -1, -1, -1, -1, -1),
             arrayOf(-1, -1, -1, -1, -1, -1, -1, -1)
     )
-    var path = mutableListOf<Square>(start)
+    var path = listOf(start)
     var res = 0
     while (true) {
         path.forEach {
@@ -54,6 +54,7 @@ fun algorithmLi(start: Square, end: Square, del: List<Pair<Int, Int>>): List<Squ
     }
     return smallest
 }
+
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
  * Поэтому, обе координаты клетки (горизонталь row, вертикаль column) могут находиться в пределах от 1 до 8.
@@ -212,10 +213,10 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
         var x = y - f
         when {!Square(x, y).inside() -> {
             f = start.row + start.column
-                e = end.row - end.column
-                y = (f + e) / 2
-                x = y - e
-            }
+            e = end.row - end.column
+            y = (f + e) / 2
+            x = y - e
+        }
         }
         res.add(Square(x, y))
         res.add(end)
@@ -244,7 +245,16 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> {
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
 
-fun kingMoveNumber(start: Square, end: Square): Int = TODO()
+fun kingMoveNumber(start: Square, end: Square): Int {
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
+    var path = listOf(start)
+    var res = 0
+    while (end !in path) {
+        path = li(end, path, delKing)
+        res++
+    }
+    return res
+}
 
 /**
  * Сложная
@@ -286,18 +296,15 @@ fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
 fun knightMoveNumber(start: Square, end: Square): Int {
-    when {
-        !start.inside() || !end.inside() -> throw IllegalArgumentException()
-        else -> {
-            var resSer = mutableListOf<Square>(start)
-            var res = 0
-            while (end !in resSer) {
-                resSer = li(end, resSer, delKnight)
-                res++
-            }
-            return res
-        }
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
+    var path = listOf<Square>(start)
+    var res = 0
+    while (true) {
+        if (end in path) break
+        path = li(end, path, delKnight)
+        res++
     }
+    return res
 }
 
 
@@ -322,3 +329,34 @@ fun knightMoveNumber(start: Square, end: Square): Int {
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun knightTrajectory(start: Square, end: Square): List<Square> = algorithmLi(start, end, delKnight).reversed()
+
+fun resRace(text: String): List<String> {
+    val parts = text.split(",")
+    val finals = mutableListOf<String>()
+    for (i in 0 until parts.size) {
+        finals.add(parts[i].trim())
+    }
+    for (i in 0 until parts.size) {
+        for (j in i until parts.size) {
+            val partOne = parts[i].trim().split(" ")[1].replace(":", "").toInt()
+            val partTwo = parts[j].trim().split(" ")[1].replace(":", "").toInt()
+            if (partOne > partTwo) {
+                finals.add(i, parts[j].trim())
+                finals.removeAt(j + 1)
+            } else if (partOne == partTwo) {
+                if (parts[i][0].toInt() > parts[j][0].toInt()) {
+                    finals.add(i, parts[j].trim())
+                    finals.removeAt(j + 1)
+                }
+            }
+        }
+    }
+    return finals
+}
+
+
+
+
+
+
+

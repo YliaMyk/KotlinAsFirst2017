@@ -59,8 +59,31 @@ operator fun Matrix<Int>.plus(other: Matrix<Int>): Matrix<Int> {
  * 10 11 12  5
  *  9  8  7  6
  */
-fun generateSpiral(height: Int, width: Int): Matrix<Int> = TODO()
-
+fun generateSpiral(height: Int, width: Int): Matrix<Int> {
+    var num = 1
+    val res = createMatrix(height, width, 0)
+    var n = 0
+    while (num <= height * width) {
+        n++
+        for (j in n - 1..width - n) {
+            if (num > height * width) break
+            res[n - 1, j] = num++
+        }
+        for (j in n until height - n + 1) {
+            if (num > height * width) break
+            res[j, width - n] = num++
+        }
+        for (j in width - n - 1 downTo n - 1) {
+            if (num > height * width) break
+            res[height - n, j] = num++
+        }
+        for (j in height - n - 1 downTo n) {
+            if (num > height * width) break
+            res[j, n - 1] = num++
+        }
+    }
+    return res
+}
 /**
  * Сложная
  *
@@ -118,7 +141,26 @@ fun <E> rotate(matrix: Matrix<E>): Matrix<E> = TODO()
  * 1 2 3
  * 3 1 2
  */
-fun isLatinSquare(matrix: Matrix<Int>): Boolean = TODO()
+fun isLatinSquare(matrix: Matrix<Int>): Boolean {
+    if (matrix.height != matrix.width) return false
+    for (i in 0 until matrix.height) {
+        val numR = mutableListOf<Int>()
+        val numC = mutableListOf<Int>()
+        for (j in 0 until matrix.width) {
+            if (!numR.contains(matrix[i, j])) numR.add(matrix[i, j])
+            else return false
+            if (!numC.contains(matrix[j, i])) numC.add(matrix[j, i])
+            else return false
+        }
+        numR.sort()
+        numC.sort()
+        if (numR == (1..matrix.width).toList())
+            return false
+        if (numC == (1..matrix.width).toList())
+            return false
+    }
+    return true
+}
 
 /**
  * Средняя

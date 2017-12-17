@@ -92,12 +92,21 @@ fun dateStrToDigit(str: String): String {
  * При неверном формате входной строки вернуть пустую строку
  */
 fun dateDigitToStr(digital: String): String {
-    val month = listOf("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "cентября",
-            "октября", "ноября", "декабря")
-    if (digital.length != 10 && (digital.replace(".", "").all { it.isDigit() })) return ""
-    val monthNum = digital.substring(3, 5).toInt() - 1
-    return if (monthNum !in 0..11) ""
-    else ("${digital.substring(0, 2)} ${month[monthNum]} ${digital.substring(6)}")
+    try {
+        val month = listOf("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября",
+                "октября", "ноября", "декабря")
+        if (digital.length != 10 && (digital.replace(".", "").all { it.isDigit() })) return ""
+        val monthNum = digital.substring(3, 5).toInt() - 1
+        if (monthNum !in 0..11) {
+            return ""
+        }
+        if (digital[0] != '0') {
+            return ("${(digital.substring(0, 2).toInt())} ${month[monthNum]} ${digital.substring(6).toInt()}")
+        }
+        return ("${(digital.substring(1, 2).toInt())} ${month[monthNum]} ${digital.substring(6).toInt()}")
+    } catch (e: NumberFormatException) {
+        return ""
+    }
 }
 /**
  * Средняя
@@ -172,7 +181,7 @@ fun bestHighJump(jumps: String): Int {
 fun plusMinus(expression: String): Int {
     val splStr = expression.split(" ")
     val reg = Regex("""\d+""")
-    if (!splStr[0].matches(Regex("""\d+"""))) throw IllegalArgumentException()
+    if (!splStr[0].matches(reg)) throw IllegalArgumentException()
     var res = splStr[0].toInt()
     var mn = 1
     for (i in 1 until splStr.size) {

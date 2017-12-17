@@ -163,8 +163,8 @@ fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
 fun sin(x: Double, eps: Double): Double{
     var wx = x
     var count = 1
-    val razn = if(wx > 2 *Math.PI) -2.0 else 2.0
-    while (wx >2*Math.PI || wx <0)
+    val razn = if (wx > 2 * Math.PI) -2.0 else 2.0
+    while (wx > 2 * Math.PI || wx < 0)
         wx += razn * Math.PI
     var result = wx
     var d = wx

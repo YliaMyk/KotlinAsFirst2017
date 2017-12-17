@@ -171,4 +171,14 @@ class Tests {
         knightTrajectory(square("a1"), square("a8")).assertKnightTrajectory(square("a1"), square("a8"), 5)
         knightTrajectory(square("a8"), square("h1")).assertKnightTrajectory(square("a8"), square("h1"), 6)
     }
+
+    @Test
+    fun resRace() {
+        assertEquals(listOf("Михайлов 16:42", "Сабитов 18:32"),
+                resRace("Михайлов 16:42, Сабитов 18:32"))
+        assertEquals(listOf("Михайлов 16:42", "Сабитов 18:32"),
+                resRace("Сабитов 18:32, Михайлов 16:42"))
+        assertEquals(listOf("Михайлов 16:42", "Сабитов 18:32", "Маликов 18:33", "Демидович 19:16"),
+                resRace("Сабитов 18:32, Михайлов 16:42, Маликов 18:33, Демидович 19:16"))
+    }
 }
